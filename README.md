@@ -19,3 +19,28 @@
 
 9. **DemoController** : This controller class contains a sample endpoint that requires authentication.
 
+
+## overview of the typical cycle :
+
+#### 1. User Registration:
+   - Client sends a registration request containing user's details (first name, last name, email, password) to the `/api/v1/auth/register` endpoint.
+   - `AuthenticationController` receives the request and delegates registration process to `AuthenticationService`.
+   - `AuthenticationService` creates a new `User` object with provided details, encrypts the password using a password encoder, assigns a default role (e.g., `Role.USER`), and saves the user to the database using `UserRepository`.
+   - `AuthenticationService` generates a JWT token for the registered user using `JwtService`, including any additional claims if required.
+   - `AuthenticationService` returns an `AuthenticationResponse` containing the generated JWT token.
+
+#### 2. User Authentication:
+   - Client sends an authentication request containing user's credentials (email, password) to `/api/v1/auth/authenticate` endpoint.
+   - `AuthenticationController` receives the request and delegates authentication process to `AuthenticationService`.
+   - `AuthenticationService` uses Spring Security `AuthenticationManager` to authenticate the user by matching provided credentials with stored user credentials.
+   - If authentication is successful, `AuthenticationService` retrieves the user from database using `UserRepository`.
+   - `AuthenticationService` generates a new JWT token for the authenticated user using `JwtService`, including any necessary claims.
+   - `AuthenticationService` returns an `AuthenticationResponse` containing the generated JWT token.
+
+#### 3. Secured Endpoint Access:
+   - Client includes JWT token in request headers, typically as "Authorization" header with value "Bearer [token]".
+   - `JwtAuthenticationFilter` intercepts the request and extracts the JWT token from headers.
+   - `JwtAuthenticationFilter` uses `JwtService` to validate the token, including checking its expiration, integrity, and matching it with user details.
+   - If token is valid, `JwtAuthenticationFilter` sets the authenticated user in security context using `SecurityContextHolder`.
+   - Request continues to secured endpoint, such as `DemoController`, where authorized user can access protected resources.
+   - If token is invalid or expired, `JwtAuthenticationFilter` denies access and returns appropriate error response.
