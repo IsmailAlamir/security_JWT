@@ -25,7 +25,7 @@ public class User implements UserDetails {
     private Integer id ;
     private String username;
     private String firstName;
-    private String lastname;
+    private String lastName;
     private String email;
     private String password;
 
@@ -35,6 +35,11 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() { // return the role you need to declare enum
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+    public Role getRole() {
+        return role;
+    }
+
+
 
     @Override
     public boolean isAccountNonExpired() {

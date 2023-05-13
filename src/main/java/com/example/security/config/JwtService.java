@@ -1,5 +1,7 @@
 package com.example.security.config;
 
+import com.example.security.user.Role;
+import com.example.security.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -37,10 +39,15 @@ public class JwtService {
             Map<String, Object> extractClaims,
             UserDetails userDetails
     ){
+        String role = ((User) userDetails).getRole().toString();
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role); // to send the role with the token 
+
         return Jwts
                 .builder()
-                .setClaims(extractClaims)
-                .setSubject(userDetails.getUsername())
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername()) // sub: "username"
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
