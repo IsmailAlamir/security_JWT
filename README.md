@@ -49,48 +49,41 @@
 ## Routes :
 
 #### 1. Register Endpoint
-Method: POST
-URL: http://localhost:8083/api/v1/auth/register
-Body:
-'''
+- Method: POST
+- URL: http://localhost:8083/api/v1/auth/register
+- Body:
+```
 {
   "firstName": "Ismail",
   "lastName": "AlAmir",
   "email": "isalamir@hotmail.com",
   "password": "password"
 }
-'''
+```
 #### 2. Authenticate Endpoint
 
-Method: POST
-URL: http://localhost:8083/api/v1/auth/authenticate
-Body:
+- Method: POST
+- URL: http://localhost:8083/api/v1/auth/authenticate
+- Body:
+```
 {
   "email": "isalamir@hotmail.com",
   "password": "password"
 }
+```
 
 #### 3. Secured Endpoint
 
-Method: GET
-URL: http://localhost:8083/api/v1/demo-controller
-Headers:
-Key: Authorization
-Value: Bearer {access_token}
+- Method: GET
+- URL: http://localhost:8083/api/v1/demo-controller
+- Headers:
+   - Key: Authorization
+   - Value: Bearer {access_token}
 
 #### 4. Refresh Token Endpoint
 
-Method: POST
-URL: http://localhost:8083/api/v1/auth/refresh
-Headers:
-Key: Authorization
-Value: Bearer {refresh_token}
-
-#### 5. Secured Endpoint with New Access Token
-
-Method: GET
-URL: http://localhost:8083/api/v1/demo-controller
-Headers:
-Key: Authorization
-Value: Bearer {new_access_token}
-
+- Method: POST
+- URL: http://localhost:8083/api/v1/auth/refresh
+- Headers:
+   - Key: Authorization
+   - Value: Bearer {refresh_token}
