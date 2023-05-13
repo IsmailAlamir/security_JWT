@@ -39,7 +39,9 @@ public class User implements UserDetails {
         return role;
     }
 
-
+    public String getEmail() {
+        return email;
+    }
 
     @Override
     public boolean isAccountNonExpired() {

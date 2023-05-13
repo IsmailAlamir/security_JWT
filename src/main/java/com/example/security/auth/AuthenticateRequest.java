@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 
 public class AuthenticateRequest {
     private String email;
+    private String username;
     String password;
+    private String refreshToken;
+
 
 
 }
