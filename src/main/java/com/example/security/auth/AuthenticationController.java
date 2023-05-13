@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(service.register(request));
+        return ResponseEntity.ok(authenticationService.register(request));
     }
     // It receives a RegisterRequest object in the request body 
     // and returns a ResponseEntity<AuthenticationResponse> containing the response from the service.register() method.
@@ -26,12 +26,20 @@ public class AuthenticationController {
 
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticateRequest request
     ){
-        return ResponseEntity.ok(service.authenticate(request));
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
     // It receives an AuthenticateRequest object in the request body
     // and returns a ResponseEntity<AuthenticationResponse> containing the response from the service.authenticate() method.
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthenticationResponse> refresh(
+            @RequestBody AuthenticateRequest request
+    ){
+        return ResponseEntity.ok(authenticationService.refresh(request.getRefreshToken()));
+    }
 
 }

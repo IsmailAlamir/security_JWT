@@ -6,12 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.CachingUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,18 +29,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,// our res
             @NonNull FilterChain filterChain // contain others filter
 
+
         ) throws ServletException, IOException { //check jwt tokens
             final String authHeader = request.getHeader("Authorization");
             // when you make a call you pass jwt in header , pass header name "Authorization"
+            final String accessToken;
+            final String refreshToken;
             final String jwt;
             final String userEmail;
             if (authHeader == null || !authHeader.startsWith("Bearer ")){
                 filterChain.doFilter(request,response);// first filter
                 return;
             }
+
             jwt =authHeader.substring(7);//7 = number of "Bearer "
-            userEmail = jwtService.extractUsername(jwt);// todo extract the userEmail from JWT token ;
+            userEmail = jwtService.extractUserEmail(jwt);
+            String[] tokenParts = jwt.split("\\|");// "access_token|refresh_token"
+            accessToken = tokenParts[0];
+
+            refreshToken = tokenParts.length > 1 ? tokenParts[1] : null;
+
+            jwtService.setAccessToken(accessToken);
+            jwtService.setRefreshToken(refreshToken);
+
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication()==null){
+                try {
+
                 UserDetails userDetails= this.userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt,userDetails)){
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -49,12 +62,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null,
                             userDetails.getAuthorities()
                     );
+
+
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
                 }
+
             }
+                catch (UsernameNotFoundException e) {
+
+                    logger.error("User not found: " + userEmail);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                    return;
+                }
+
             filterChain.doFilter(request,response);
     }
+
+
+}
 }
