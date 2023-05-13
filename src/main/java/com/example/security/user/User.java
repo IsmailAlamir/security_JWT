@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data //generate getter and setter etc..
-@Builder //help build object
+@Builder //help build object "generates a builder pattern implementation"
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

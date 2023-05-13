@@ -20,6 +20,9 @@ public class AuthenticationController {
     ){
         return ResponseEntity.ok(service.register(request));
     }
+    // It receives a RegisterRequest object in the request body 
+    // and returns a ResponseEntity<AuthenticationResponse> containing the response from the service.register() method.
+
 
 
     @PostMapping("/authenticate")
@@ -28,6 +31,7 @@ public class AuthenticationController {
     ){
         return ResponseEntity.ok(service.authenticate(request));
     }
-
+    // It receives an AuthenticateRequest object in the request body
+    // and returns a ResponseEntity<AuthenticationResponse> containing the response from the service.authenticate() method.
 
 }

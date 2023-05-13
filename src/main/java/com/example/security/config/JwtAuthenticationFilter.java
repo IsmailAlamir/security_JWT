@@ -18,8 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component // to tell spring this is beans
-@RequiredArgsConstructor //create a constructor using any final field
+@Component // to tell spring this is beans , allows it to be automatically detected and registered as a bean 
+@RequiredArgsConstructor //create a constructor using any final field "generates a constructor with required arguments"
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService; //our own implementations because we want to fetch our user from our Database
