@@ -1,6 +1,6 @@
 # security_JWT
 
-## summary of the components and their functionality:
+## Summary Of The Components And Their Functionality:
 1. **User** and **Role** : These classes represent the user entity and user roles in the application.
 
 2. **UserRepository** : This interface extends the JpaRepository interface and provides methods for interacting with the user database.
@@ -20,7 +20,7 @@
 9. **DemoController** : This controller class contains a sample endpoint that requires authentication.
 
 
-## overview of the typical cycle :
+## Overview Of The Typical Cycle :
 
 #### 1. User Registration:
    - Client sends a registration request containing user's details (first name, last name, email, password) to the `/api/v1/auth/register` endpoint.
@@ -44,3 +44,53 @@
    - If token is valid, `JwtAuthenticationFilter` sets the authenticated user in security context using `SecurityContextHolder`.
    - Request continues to secured endpoint, such as `DemoController`, where authorized user can access protected resources.
    - If token is invalid or expired, `JwtAuthenticationFilter` denies access and returns appropriate error response.
+
+
+## Routes :
+
+#### 1. Register Endpoint
+Method: POST
+URL: http://localhost:8083/api/v1/auth/register
+Body:
+'''
+{
+  "firstName": "Ismail",
+  "lastName": "AlAmir",
+  "email": "isalamir@hotmail.com",
+  "password": "password"
+}
+'''
+#### 2. Authenticate Endpoint
+
+Method: POST
+URL: http://localhost:8083/api/v1/auth/authenticate
+Body:
+{
+  "email": "isalamir@hotmail.com",
+  "password": "password"
+}
+
+#### 3. Secured Endpoint
+
+Method: GET
+URL: http://localhost:8083/api/v1/demo-controller
+Headers:
+Key: Authorization
+Value: Bearer {access_token}
+
+#### 4. Refresh Token Endpoint
+
+Method: POST
+URL: http://localhost:8083/api/v1/auth/refresh
+Headers:
+Key: Authorization
+Value: Bearer {refresh_token}
+
+#### 5. Secured Endpoint with New Access Token
+
+Method: GET
+URL: http://localhost:8083/api/v1/demo-controller
+Headers:
+Key: Authorization
+Value: Bearer {new_access_token}
+
