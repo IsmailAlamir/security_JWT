@@ -1,5 +1,6 @@
 package com.example.security.user;
 
+import com.example.security.token.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +32,10 @@ public class User implements UserDetails {
 
     @Enumerated (EnumType.STRING)//to tell spring its enum , take string value to it
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() { // return the role you need to declare enum
         return List.of(new SimpleGrantedAuthority(role.name()));
