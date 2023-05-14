@@ -12,10 +12,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     
-    @JsonProperty("access_Token")
+    @JsonProperty("access_Token") //to specify the JSON property name for a field or method during serialization and deserialization
     private String accessToken;
 
     @JsonProperty("refresh_Token")
     private String refreshToken;
 
 }
+
+

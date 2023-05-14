@@ -1,11 +1,15 @@
 package com.example.security.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -35,11 +39,17 @@ public class AuthenticationController {
     // and returns a ResponseEntity<AuthenticationResponse> containing the response from the service.authenticate() method.
 
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refresh(
-            @RequestBody AuthenticateRequest request
-    ){
-        return ResponseEntity.ok(authenticationService.refresh(request.getRefreshToken()));
-    }
-
+//    @PostMapping("/refresh")
+//    public ResponseEntity<AuthenticationResponse> refresh(
+//            @RequestBody AuthenticateRequest request
+//    ){
+//        return ResponseEntity.ok(authenticationService.refresh(request.getRefreshToken()));
+//    }
+        @PostMapping("/refresh")
+        public void refresh( // you ask for anything
+                HttpServletRequest request, //
+                HttpServletResponse response // help to send back the response
+        ) throws IOException {
+        authenticationService.refreshToken(request, response);
+        }
 }

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,21 @@ import java.util.function.Function;
 @Service // help to manage beans
 public class JwtService {
 
-    private static final String SECRET_KEY = "4D6351655468576D5A7134743777217A25432A462D4A614E645267556A586E32";
+
+    @Value("${jwt.secret}")
+    private String secretKey ;
+
+
+//    @Value("${jwt.token.expiration.access}")
+//    private long accessTokenExpiration;
+//
+//    @Value("${jwt.token.expiration.refresh}")
+//    private long refreshTokenExpiration;
+
+
+//    private static final String SECRET_KEY = "4D6351655468576D5A7134743777217A25432A462D4A614E645267556A586E32";
+   // put it inside of application.properties
+
     // to generate it : https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx
     // min = 256 bit or more , hex
     // you can add it to propagates
@@ -90,7 +105,7 @@ public class JwtService {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
     //signing Key : is used to make signature part in jwt to make sure that the token doesn't change or someone sees it
