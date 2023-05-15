@@ -45,17 +45,6 @@ public class AuthenticationService {
                 .build();
     }
 
-    private void saveUserToken(User savedUser, String jwtToken) {
-        var token = Token.builder()
-                .user(savedUser)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .revoked(false)
-                .expired(false)
-                .build();
-        tokenRepository.save(token);
-    }
-
 
     public AuthenticationResponse authenticate(AuthenticateRequest request) { // the user can log in using email or username
         User user;
@@ -77,6 +66,7 @@ public class AuthenticationService {
 
         var accessToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(user,accessToken );
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -118,6 +108,23 @@ public class AuthenticationService {
         }
         return null;
     }
+
+    private void revokeAllUserToken(User user){
+        var validUserToken = tokenRepository.findAllValidTokenByUser(user.getId());
+
+    }
+
+    private void saveUserToken(User user, String jwtToken) { // save the token in DB
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .revoked(false)
+                .expired(false)
+                .build();
+        tokenRepository.save(token);
+    }
+
 
 
 
