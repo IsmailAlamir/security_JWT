@@ -1,5 +1,6 @@
 package com.example.security.config;
 
+import com.example.security.token.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService; //our own implementations because we want to fetch our user from our Database
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal( //filters
@@ -53,14 +55,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtService.setRefreshToken(refreshToken);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication()==null){
-                try {
 
-                UserDetails userDetails= this.userDetailsService.loadUserByUsername(userEmail);
-                if (jwtService.isTokenValid(jwt,userDetails)){
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
+                try {
+                    var isTokenValid = tokenRepository.findByToken(jwt)
+                            .map(t -> !t.isExpired() && !t.isRevoked())
+                            .orElse(false);
+                    UserDetails userDetails= this.userDetailsService.loadUserByUsername(userEmail);
+                    if (jwtService.isTokenValid(jwt,userDetails) && isTokenValid){
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
                     );
 
 
